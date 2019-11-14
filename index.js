@@ -1,6 +1,12 @@
 const TelegramBot = require('node-telegram-bot-api');
+const { Random, nodeCrypto } = require('random-js');
+const crypto = require('crypto');
 
-require('dotenv').config()
+require('dotenv-flow').config()
+
+const random = new Random(nodeCrypto);
+
+const token = process.env.TELEGRAM_TOKEN;
 
 const allanSayings = [
   'Namoral',
@@ -9,23 +15,12 @@ const allanSayings = [
   'Poooooorra',
 ]
 
-
-const bot = new TelegramBot(process.env.TELEGRAM_TOKEN, { polling: true })
-
+const bot = new TelegramBot(token, { polling: true })
 
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-  console.log('message received')
-
-  let randomNumber = Math.random()
-
-  console.log('randomNumber', randomNumber)
-
-  let isGoingToSend = randomNumber < 0.3
-
-  let randomMessage = allanSayings[(Math.floor(Math.random() * allanSayings.length))]
-
+  let randomMessage = allanSayings[random.integer(0, allanSayings.length - 1)]
   // send a message to the chat acknowledging receipt of their message
-  if (isGoingToSend)
+  if (random.bool(0.15))
     bot.sendMessage(chatId, randomMessage);
 });
